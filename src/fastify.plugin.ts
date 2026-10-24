@@ -37,7 +37,6 @@ export const withFastify = <TRegistry extends XenoRegistry = XenoRegistry>(
 
       if (Guards.isDefined(setup)) setup(fastifyOptions, config)
 
-      // Registra i servizi specifici per Fastify
       builder.addServices((container) => {
         container.addSingleton(TOKENS.HTTP_SERVER, (c) => {
           const routeMatcher = c.resolve(TOKENS.ROUTE_MATCHER)

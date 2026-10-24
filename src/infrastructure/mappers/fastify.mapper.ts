@@ -1,21 +1,6 @@
 import type { Dictionary, XenoIncomingRequest } from '@xeno-js/core'
 import { Guards, HttpHelper } from '@xeno-js/core'
-import type { FastifyReply } from 'fastify'
-
-interface FastifyRequestInput {
-  url?: string
-  method?: string
-  headers: Record<string, string | string[] | undefined>
-  body: unknown
-  query: unknown
-  raw: {
-    on: (event: 'aborted', listener: () => void) => unknown
-  }
-  socket?: {
-    remoteAddress?: string
-    remotePort?: number
-  }
-}
+import type { FastifyReply, FastifyRequest } from 'fastify'
 
 export class FastifyRequestMapper {
   /**
@@ -24,14 +9,15 @@ export class FastifyRequestMapper {
    * @returns The mapped XenoIncomingRequest.
    * @throws {Error} If the request is not a Fastify
    */
-  public static mapRequest(req: FastifyRequestInput): XenoIncomingRequest {
+  public static mapRequest(req: FastifyRequest): XenoIncomingRequest {
     const normalizedHeaders = HttpHelper.normalizeHeaders(req.headers)
     const path = (req.url ?? '/').split('?')[0]
     const abortController = new AbortController()
 
-    req.raw.on('aborted', () => {
+    ;(req.raw as { on: (event: 'aborted', listener: () => void) => void }).on('aborted', () => {
       abortController.abort()
     })
+
     return {
       url: req.url,
       path,
@@ -41,8 +27,8 @@ export class FastifyRequestMapper {
       query: req.query as Dictionary<string>,
       signal: abortController.signal,
       socket: {
-        remoteAddress: req.socket?.remoteAddress,
-        remotePort: req.socket?.remotePort,
+        remoteAddress: (req.socket as { remoteAddress?: string })?.remoteAddress,
+        remotePort: (req.socket as { remotePort?: number })?.remotePort,
       },
     }
   }
