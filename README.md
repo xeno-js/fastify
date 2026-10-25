@@ -53,8 +53,52 @@ matches routes via `ROUTE_MATCHER`, and executes requests using
 **Implementation:**
 
 ```ts
+// src/routes.ts
+import {
+  NativeRouteDefinition,
+  RouteHandlerContext,
+  HttpRouteParamHelper,
+  withCors,
+} from '@xeno-js/core'
+import { MyRegistry } from './registry'
+
+export const routes: NativeRouteDefinition<MyRegistry>[] = [
+  withCors<MyRegistry>(
+    {
+      path: '/api/v1/products',
+      method: 'GET',
+      handler: async (ctx: RouteHandlerContext<MyRegistry>) => {
+        const input = await HttpRouteParamHelper.extractInput<{
+          page?: number
+          pageSize?: number
+        }>(ctx.req, '/api/v1/products')
+        return ctx.handle('GET_PRODUCTS_CONTROLLER', input)
+      },
+    },
+    ['*'],
+    false,
+  ),
+  withCors<MyRegistry>(
+    {
+      path: '/api/v1/products/:id',
+      method: 'GET',
+      handler: async (ctx: RouteHandlerContext<MyRegistry>) => {
+        const input = await HttpRouteParamHelper.extractInput<{ id: string }>(
+          ctx.req,
+          '/api/v1/products/:id',
+        )
+        return ctx.handle('GET_PRODUCT_BY_ID_CONTROLLER', input)
+      },
+    },
+    ['*'],
+    false,
+  ),
+]
+
+// src/bootstrap.ts
 import { XenoAppBuilder } from '@xeno-js/core'
 import { withFastify } from '@xeno-js/fastify'
+import { routes } from './routes'
 
 const app = await new XenoAppBuilder()
   .addHttpServer(
@@ -63,6 +107,7 @@ const app = await new XenoAppBuilder()
       options.trustProxy = true
     }),
   )
+  .addRoutes(routes)
   .build()
 
 await app.listen({ port: 3000, host: '0.0.0.0' })
