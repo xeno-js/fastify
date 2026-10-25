@@ -7,7 +7,7 @@
 
   <p>
     <a href="https://www.npmjs.com/package/@xeno-js/fastify"><img src="https://img.shields.io/npm/v/@xeno-js/fastify?style=flat-square" alt="NPM Version" /></a>
-    <a href="https://github.com/xeno-js/core"><img src="https://img.shields.io/badge/Powered%20by-Xeno-blueviolet?style=flat-square" alt="Powered by Xeno" /></a>
+    <a href="https://github.com/xeno-js/fastify"><img src="https://img.shields.io/badge/Powered%20by-Xeno-blueviolet?style=flat-square" alt="Powered by Xeno" /></a>
     <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue?style=flat-square" alt="License: MIT" /></a>
     <a href="https://buymeacoffee.com/xenojs">
       <img src="https://img.shields.io/badge/Buy%20Me%20A%20Coffee-Support-FFdd00?style=flat-square&logo=buy-me-a-coffee&logoColor=black" alt="Buy Me A Coffee" />
